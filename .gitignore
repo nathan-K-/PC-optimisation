@@ -44,6 +44,7 @@ CTestTestfile.cmake
 
 #exe
 pdc_evol_model
+pdc_evol_model_G++
 
 # ?
 stats_best.txt
