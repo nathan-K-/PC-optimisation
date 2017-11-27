@@ -48,3 +48,8 @@ pdc_evol_model
 # ?
 stats_best.txt
 stats_mean.txt
+
+# Visual studio files
+*.sln
+*.vcxproj
+*.vcxproj.filters
