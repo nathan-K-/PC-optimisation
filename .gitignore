@@ -54,6 +54,10 @@ stats_mean.txt
 *.sln
 *.vcxproj
 *.vcxproj.filters
+*.vcxproj.user
 Debug/
 Win32/
 pdc_evol_model.dir/
+
+# Profiling files
+UC_Profiling/
