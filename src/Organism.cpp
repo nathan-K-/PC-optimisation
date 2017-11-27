@@ -330,7 +330,7 @@ bool Organism::dying_or_not() {
 
   return death;
 }
-
+/*
 void Organism::try_to_move() {
   for (auto it = move_list_.begin(); it != move_list_.end(); it++) {
     if ((*it)->distance_ > 0) {
@@ -364,7 +364,7 @@ void Organism::try_to_move() {
     }
   }
 }
-
+*/
 void Organism::compute_fitness() {
   life_duration_++;
 
