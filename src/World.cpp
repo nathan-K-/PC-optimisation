@@ -29,9 +29,8 @@
 #include "DNA.h"
 #include "Organism.h"
 #if WITH_GRAPHICS_CONTEXT
-	#include "GraphicDisplay.h"
+#include "GraphicDisplay.h"
 #endif
-
 
 World::World(int width, int height, uint32_t seed) {
   width_ = width;

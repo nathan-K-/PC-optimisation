@@ -253,7 +253,7 @@ void Organism::init_organism() {
 
 void Organism::compute_protein_concentration() {
   int rna_id = 0;
-  for (std::vector<RNA*>::iterator it = rna_list_.begin(); it != rna_list_.end(); it++) {
+  for (auto it = rna_list_.begin(); it != rna_list_.end(); it++) {
     float delta_pos = 0, delta_neg = 0;
     for (auto prot : rna_influence_[rna_id]) {
       if (prot.second > 0)
