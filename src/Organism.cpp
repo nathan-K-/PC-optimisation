@@ -293,7 +293,7 @@ std::unordered_map<float, float> Organism::compute_protein_concentration_step2()
 	return delta_concentration;
 }
 
-void Organism::compute_protein_concentration_step3(std::unordered_map<float, float> delta_concentration) {
+void Organism::compute_protein_concentration_step3(std::unordered_map<float, float>& delta_concentration) {
 	for (auto delta : delta_concentration) {
 		delta.second -= Common::Protein_Degradation_Rate * protein_list_map_[delta.first]->concentration_;
 		delta.second *= 1 / (Common::Protein_Degradation_Step);
