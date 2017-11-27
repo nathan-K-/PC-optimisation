@@ -66,6 +66,9 @@ class Organism {
     void try_to_move();
     void compute_fitness();
 
+	void compute_protein_concentration_step1();
+	std::unordered_map<float, float> compute_protein_concentration_step2();
+	void compute_protein_concentration_step3(std::unordered_map<float, float> delta_concentration);
     void compute_protein_concentration();
 
     Organism* divide();
