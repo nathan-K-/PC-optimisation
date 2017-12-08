@@ -253,6 +253,7 @@ void Organism::compute_protein_concentration_step1() {
 		}
 
 		compute_protein_concentration_step1dot5(delta_pos, delta_neg, rna_id);
+        rna_id++;
 	}
 }
 
@@ -267,7 +268,7 @@ void Organism::compute_protein_concentration_step1dot5(float delta_pos, float de
 			* (delta_pos_pow_n /
 			(delta_pos_pow_n +
 				Common::hill_shape)));
-	rna_id++;
+
 }
 
 std::unordered_map<float, float> Organism::compute_protein_concentration_step2() {
