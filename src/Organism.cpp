@@ -262,18 +262,22 @@ void Organism::compute_protein_concentration_step1() {
 				delta_neg -= prot.second * protein_list_map_[prot.first]->concentration_;
 		}
 
-		float delta_pos_pow_n = pow(delta_pos, Common::hill_shape_n);
-		float delta_neg_pow_n = pow(delta_neg, Common::hill_shape_n);
-
-		rna_list_[rna_id]->current_concentration_ = rna_list_[rna_id]->concentration_base_
-			* (Common::hill_shape
-				/ (delta_neg_pow_n + Common::hill_shape))
-			* (1 + ((1 / rna_list_[rna_id]->concentration_base_) - 1)
-				* (delta_pos_pow_n /
-				(delta_pos_pow_n +
-					Common::hill_shape)));
-		rna_id++;
+		compute_protein_concentration_step1dot5(delta_pos, delta_neg, rna_id);
 	}
+}
+
+void Organism::compute_protein_concentration_step1dot5(float delta_pos, float delta_neg, int rna_id) {
+	float delta_pos_pow_n = pow(delta_pos, Common::hill_shape_n);
+	float delta_neg_pow_n = pow(delta_neg, Common::hill_shape_n);
+
+	rna_list_[rna_id]->current_concentration_ = rna_list_[rna_id]->concentration_base_
+		* (Common::hill_shape
+			/ (delta_neg_pow_n + Common::hill_shape))
+		* (1 + ((1 / rna_list_[rna_id]->concentration_base_) - 1)
+			* (delta_pos_pow_n /
+			(delta_pos_pow_n +
+				Common::hill_shape)));
+	rna_id++;
 }
 
 std::unordered_map<float, float> Organism::compute_protein_concentration_step2() {

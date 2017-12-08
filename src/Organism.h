@@ -67,6 +67,7 @@ class Organism {
     void compute_fitness();
 
 	void compute_protein_concentration_step1();
+	void compute_protein_concentration_step1dot5(float delta_pos, float delta_neg, int rna_id);
 	std::unordered_map<float, float> compute_protein_concentration_step2();
 	void compute_protein_concentration_step3(std::unordered_map<float, float>& delta_concentration);
     void compute_protein_concentration();
