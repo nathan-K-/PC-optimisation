@@ -4,7 +4,6 @@
 
 #include "Organism.h"
 #include "DNA.h"
-#include "Common.h"
 
 
 void Organism::translate_RNA() {
@@ -170,32 +169,23 @@ void Organism::translate_move() {
 void Organism::build_regulation_network() {
   int rna_id = 0;
   for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
-    for ( auto it_j = protein_fitness_list_.begin(); it_j != protein_fitness_list_.end(); it_j++ ) {
+    for (auto &it_j : protein_fitness_list_) {
       int index_i = (*it)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
-      int index_j = (*it_j)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
+      int index_j = it_j->binding_pattern_*Common::BINDING_MATRIX_SIZE;
       if (Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j] != 0) {
-        rna_influence_[rna_id][(*it_j)->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
+        rna_influence_[rna_id][it_j->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
       }
     }
-    for ( auto it_j = protein_TF_list_.begin(); it_j != protein_TF_list_.end(); it_j++ ) {
+    for (auto &it_j : protein_TF_list_) {
       int index_i = rna_list_[rna_id]->binding_pattern_*Common::BINDING_MATRIX_SIZE;
-      int index_j =  (*it_j)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
+      int index_j = it_j->binding_pattern_*Common::BINDING_MATRIX_SIZE;
       if (Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j] != 0) {
-        rna_influence_[rna_id][(*it_j)->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
+        rna_influence_[rna_id][it_j->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
       }
     }
     rna_id++;
   }
 }
-
-void Organism::compute_next_step() {
-  // Activate Pump
-  activate_pump();
-
-  // Compute protein concentration for X steps
-  compute_protein_concentration();
-}
-
 
 
 void Organism::activate_pump() {
@@ -344,45 +334,11 @@ bool Organism::dying_or_not() {
   int death_number = dis_death(gridcell_->float_gen_);
 
 
-  bool death = (bool) death_number % 2;
+  bool death = (bool) (death_number % 2);
 
   return death;
 }
-/*
-void Organism::try_to_move() {
-  for (auto it = move_list_.begin(); it != move_list_.end(); it++) {
-    if ((*it)->distance_ > 0) {
-      bool move = false;
-      int retry = 0;
-      std::uniform_int_distribution<uint32_t> dis_distance(0,(*it)->distance_);
-      while (retry < (*it)->retry_ && !move) {
-        int x_offset=dis_distance(gridcell_->float_gen_);
-        int y_offset=dis_distance(gridcell_->float_gen_);
-        int new_x,new_y;
-        if (gridcell_->x_+x_offset >= gridcell_->world_->width_) {
-          new_x = gridcell_->world_->width_-1;
-        } else {
-          new_x = gridcell_->x_+x_offset;
-        }
 
-        if (gridcell_->y_+y_offset >= gridcell_->world_->height_) {
-          new_y = gridcell_->world_->height_-1;
-        } else {
-          new_y = gridcell_->y_+y_offset;
-        }
-
-        if (gridcell_->world_->grid_cell_[new_x*gridcell_->world_->width_+new_y]->organism_ != nullptr) {
-          move = true;
-          move_success_++;
-          gridcell_->world_->grid_cell_[new_x*gridcell_->world_->width_+new_y]->organism_ = this;
-          gridcell_ = gridcell_->world_->grid_cell_[new_x*gridcell_->world_->width_+new_y];
-          gridcell_->organism_ = nullptr;
-        }
-      }
-    }
-  }
-}
-*/
 void Organism::compute_fitness() {
   life_duration_++;
 
@@ -421,9 +377,8 @@ void Organism::compute_fitness() {
 }
 
 void Organism::mutate() {
-  old = this;
 
-  std::binomial_distribution<int> dis_switch(dna_->bp_list_.size(),Common::Mutation_Rate);
+    std::binomial_distribution<int> dis_switch(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_insertion(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_deletion(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_duplication(dna_->bp_list_.size(),Common::Mutation_Rate);
@@ -495,13 +450,6 @@ void Organism::mutate() {
     dna_->modify_bp(modification_pos,gridcell_);
   }
 }
-
-Organism* Organism::divide() {
-  Organism* new_org = new Organism(this);
-  return new_org;
-}
-
-
 
 
 Organism::Organism(Organism* organism) {

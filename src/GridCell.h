@@ -33,7 +33,6 @@ class GridCell {
 
     void diffuse_protein();
     void degrade_protein();
-    void push_new_protein(std::vector<Protein*> protein_list);
 };
 
 
