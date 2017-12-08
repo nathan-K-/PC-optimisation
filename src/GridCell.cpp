@@ -3,7 +3,6 @@
 //
 
 #include "GridCell.h"
-#include "Organism.h"
 
 void GridCell::diffuse_protein() {
   for (int i = x_ - Common::Diffusion_Neighbors_Size; i <= x_ + Common::Diffusion_Neighbors_Size; i++) {
@@ -38,15 +37,6 @@ void GridCell::degrade_protein() {
   }
 }
 
-void GridCell::push_new_protein(std::vector<Protein*> protein_list) {
-  for (auto prot : protein_list) {
-    if ( protein_list_map_.find(prot->value_) == protein_list_map_.end() ) {
-      protein_list_map_[prot->value_] =  prot;
-    } else {
-      protein_list_map_[prot->value_]->concentration_ += prot->concentration_;
-    }
-  }
-}
 
 
 

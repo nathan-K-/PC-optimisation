@@ -48,15 +48,8 @@ class Common {
     const static int Diffusion_Neighbors_Size = 1;
     constexpr static float Diffusion_Quantity = 0.1;
 
-    /** Graphical Constants **/
-    const static int CELL_SPACE = 3;
-    const static int CELL_SCALE = 15;
-    const static int SPAN = 1;
-    const static size_t GRADIENT_SIZE = 20;
-    constexpr static double GRADIENT_SCALE = 30;
-
     const static int Number_Degradation_Step = 10;
-    const static int Number_Evolution_Step = 500;
+    const static int Number_Evolution_Step = 150;
 };
 
 

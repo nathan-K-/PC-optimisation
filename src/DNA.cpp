@@ -3,7 +3,6 @@
 //
 
 #include "DNA.h"
-#include "Common.h"
 
 DNA::DNA(GridCell* grid_cell) {
 // Create a random individual
