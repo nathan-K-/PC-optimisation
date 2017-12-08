@@ -168,6 +168,8 @@ void Organism::translate_move() {
 
 void Organism::build_regulation_network() {
   int rna_id = 0;
+
+  rna_influence_.resize(rna_list_.size());
   for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
     for (auto &it_j : protein_fitness_list_) {
       int index_i = (*it)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
