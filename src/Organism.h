@@ -60,6 +60,8 @@ class Organism {
     void mutate();
 
     void activate_pump();
+	void activate_pump_step1(Pump * & it);
+	void activate_pump_step2(Pump * & it);
     bool dying_or_not();
     void compute_fitness();
 

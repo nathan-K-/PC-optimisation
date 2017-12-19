@@ -123,8 +123,8 @@ void Organism::translate_protein() {
 void Organism::translate_pump() {
   bool within_pump = false;
 
-  for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
-    for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) {
+  for (auto &it : rna_list_) {
+    for (auto it_j = it->bp_list_.begin(); it_j < it->bp_list_.end(); it_j++) {
       if ((*it_j)->type_ ==
           (int) BP::BP_Type::START_PUMP) {
         within_pump = true;
@@ -173,9 +173,9 @@ void Organism::build_regulation_network() {
   int rna_id = 0;
 
   rna_influence_.resize(rna_list_.size());
-  for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
+  for (auto &it : rna_list_) {
     for (auto &it_j : protein_fitness_list_) {
-      int index_i = (*it)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
+      int index_i = it->binding_pattern_*Common::BINDING_MATRIX_SIZE;
       int index_j = it_j->binding_pattern_*Common::BINDING_MATRIX_SIZE;
       if (Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j] != 0) {
         rna_influence_[rna_id][it_j->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
@@ -192,49 +192,56 @@ void Organism::build_regulation_network() {
   }
 }
 
+void Organism::activate_pump_step1(Pump * & it) {
+    for (auto prot : protein_list_map_) {
+        if (it->start_range_ >= prot.second->value_ &&
+            it->end_range_ <= prot.second->value_) {
+            float remove =
+                    prot.second->concentration_*(it->speed_/100);
+            prot.second->concentration_-=remove;
+            if ( gridcell_->protein_list_map_.find(prot.second->value_)
+                 == gridcell_->protein_list_map_.end() ) {
+                Protein* prot_n = new Protein(prot.second->type_,
+                                              prot.second->binding_pattern_,
+                                              prot.second->value_);
+                prot_n->concentration_ = remove;
+                gridcell_->protein_list_map_[prot.second->value_] = prot_n;
+            } else {
+                gridcell_->protein_list_map_[prot.second->value_]
+                        ->concentration_ += remove;
+            }
+        }
+    }
+}
+
+void Organism::activate_pump_step2(Pump * & it) {
+    for (auto prot : gridcell_->protein_list_map_) {
+        if (it->start_range_ >= prot.first &&
+            it->end_range_ <= prot.first) {
+            float remove =
+                    prot.second->concentration_*(it->speed_/100);
+            prot.second->concentration_-=remove;
+            if ( protein_list_map_.find(prot.first)
+                 == protein_list_map_.end() ) {
+                Protein* prot_n = new Protein(prot.second->type_,
+                                              prot.second->binding_pattern_,
+                                              prot.second->value_);
+                prot_n->concentration_ = remove;
+                protein_list_map_[prot_n->value_] = prot_n;
+            } else {
+                protein_list_map_[prot.first]
+                        ->concentration_ += remove;
+            }
+        }
+    }
+}
 
 void Organism::activate_pump() {
-  for (auto it = pump_list_.begin(); it != pump_list_.end(); it++) {
-    if ((*it)->in_out_) {
-      for (auto prot : protein_list_map_) {
-        if ((*it)->start_range_ >= prot.second->value_ &&
-            (*it)->end_range_ <= prot.second->value_) {
-          float remove =
-              prot.second->concentration_*((*it)->speed_/100);
-          prot.second->concentration_-=remove;
-          if ( gridcell_->protein_list_map_.find(prot.second->value_)
-               == gridcell_->protein_list_map_.end() ) {
-            Protein* prot_n = new Protein(prot.second->type_,
-                                        prot.second->binding_pattern_,
-                                          prot.second->value_);
-            prot_n->concentration_ = remove;
-            gridcell_->protein_list_map_[prot.second->value_] = prot_n;
-          } else {
-            gridcell_->protein_list_map_[prot.second->value_]
-                ->concentration_ += remove;
-          }
-        }
-      }
+  for (auto &it : pump_list_) {
+    if (it->in_out_) {
+        activate_pump_step1(it);
     } else {
-      for (auto prot : gridcell_->protein_list_map_) {
-        if ((*it)->start_range_ >= prot.first &&
-            (*it)->end_range_ <= prot.first) {
-          float remove =
-              prot.second->concentration_*((*it)->speed_/100);
-          prot.second->concentration_-=remove;
-          if ( protein_list_map_.find(prot.first)
-               == protein_list_map_.end() ) {
-            Protein* prot_n = new Protein(prot.second->type_,
-                                          prot.second->binding_pattern_,
-                                          prot.second->value_);
-            prot_n->concentration_ = remove;
-            protein_list_map_[prot_n->value_] = prot_n;
-          } else {
-            protein_list_map_[prot.first]
-                ->concentration_ += remove;
-          }
-        }
-      }
+        activate_pump_step2(it);
     }
   }
 }
@@ -296,7 +303,7 @@ std::unordered_map<float, float> Organism::compute_protein_concentration_step2()
 void Organism::compute_protein_concentration_step3(std::unordered_map<float, float>& delta_concentration) {
 	for (auto delta : delta_concentration) {
 		delta.second -= Common::Protein_Degradation_Rate * protein_list_map_[delta.first]->concentration_;
-		delta.second *= 1 / (Common::Protein_Degradation_Step);
+		delta.second *= 1 / (float) (Common::Protein_Degradation_Step);
 
 		protein_list_map_[delta.first]->concentration_ += delta.second;
 	}
@@ -384,7 +391,7 @@ void Organism::compute_fitness() {
 
 void Organism::mutate() {
 
-    std::binomial_distribution<int> dis_switch(dna_->bp_list_.size(),Common::Mutation_Rate);
+  std::binomial_distribution<int> dis_switch(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_insertion(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_deletion(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_duplication(dna_->bp_list_.size(),Common::Mutation_Rate);

@@ -32,4 +32,4 @@ with open(mean_ref_file, 'r') as csv_mean_ref, open(mean_test_file, 'r') as csv_
 
     compare_file(best_ref, test_ref)
 
-print("Success !")
+print("Non-regression test successful !")
