@@ -34,7 +34,7 @@ class Organism {
     std::vector<Protein*> protein_poison_list_;
     std::vector<Protein*> protein_antipoison_list_;
 
-    std::map<float,Protein*> protein_list_map_; //from unordered map to map
+    std::map<float,Protein*> protein_list_map_; //from unordered map to map (is it really better ?)
 
     std::vector<Pump*> pump_list_;
     std::vector<Move*> move_list_;
