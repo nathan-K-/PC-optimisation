@@ -26,15 +26,15 @@ class Organism {
 
     DNA* dna_;
     std::vector<RNA*> rna_list_;
-    std::vector<std::unordered_map<float,float>> rna_influence_; //TODO vecteur a la place
-    std::unordered_map<int,std::unordered_map<float,Protein*>> rna_produce_protein_; //TODO aussi ?
+    std::vector<std::unordered_map<float,float>> rna_influence_; //from unordered map to vector
+    std::vector<std::unordered_map<float,Protein*>> rna_produce_protein_; //from unordered map to vector
 
     std::vector<Protein*> protein_fitness_list_;
     std::vector<Protein*> protein_TF_list_;
     std::vector<Protein*> protein_poison_list_;
     std::vector<Protein*> protein_antipoison_list_;
 
-    std::map<float,Protein*> protein_list_map_; //todo test avec map
+    std::map<float,Protein*> protein_list_map_; //from unordered map to map
 
     std::vector<Pump*> pump_list_;
     std::vector<Move*> move_list_;

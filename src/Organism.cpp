@@ -28,6 +28,9 @@ void Organism::translate_protein() {
 
   float binding_pattern = -1;
   int rna_id = 0;
+
+  rna_produce_protein_.resize(rna_list_.size());
+
   for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
     for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) {
       if ((*it_j)->type_ == (int) BP::BP_Type::START_PROTEIN) {
@@ -276,13 +279,13 @@ void Organism::compute_protein_concentration_step1dot5(float delta_pos, float de
 std::unordered_map<float, float> Organism::compute_protein_concentration_step2() {
 	std::unordered_map<float, float> delta_concentration;
 
-	for (auto rna : rna_produce_protein_) {
-		for (auto prot : rna_produce_protein_[rna.first]) {
+	for (int i = 0; i < rna_produce_protein_.size(); i++) {
+		for (auto prot : rna_produce_protein_[i]) {
 			if (delta_concentration.find(prot.first) == delta_concentration.end()) {
-				delta_concentration[prot.first] = rna_list_[rna.first]->current_concentration_;
+				delta_concentration[prot.first] = rna_list_[i]->current_concentration_;
 			}
 			else {
-				delta_concentration[prot.first] += rna_list_[rna.first]->current_concentration_;
+				delta_concentration[prot.first] += rna_list_[i]->current_concentration_;
 			}
 		}
 	}
