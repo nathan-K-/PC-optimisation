@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include "Move.h"
 #include "Pump.h"
 #include "Protein.h"
@@ -33,7 +34,7 @@ class Organism {
     std::vector<Protein*> protein_poison_list_;
     std::vector<Protein*> protein_antipoison_list_;
 
-    std::unordered_map<float,Protein*> protein_list_map_; //todo test avec map
+    std::map<float,Protein*> protein_list_map_; //todo test avec map
 
     std::vector<Pump*> pump_list_;
     std::vector<Move*> move_list_;
