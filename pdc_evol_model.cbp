@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="pdc_evol_model"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/nathan/DEV/PC-optimisation"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/nathan/DEV/PC-optimisation"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/nathan/DEV/PC-optimisation"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="pdc_evol_model">
+				<Option output="/home/nathan/DEV/PC-optimisation/pdc_evol_model" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/nathan/DEV/PC-optimisation"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 pdc_evol_model"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="pdc_evol_model/fast">
+				<Option output="/home/nathan/DEV/PC-optimisation/pdc_evol_model" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/nathan/DEV/PC-optimisation"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 pdc_evol_model/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/nathan/DEV/PC-optimisation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/main.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Move.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Move.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Move_Block.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Move_Block.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Protein.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Protein.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Protein_Block.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Protein_Block.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Pump.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Pump.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Pump_Block.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/BP_Pump_Block.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Common.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Common.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/DNA.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/DNA.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/GridCell.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/GridCell.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Move.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Move.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Organism.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Organism.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Protein.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Protein.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Pump.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/Pump.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/RNA.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/RNA.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/World.cpp">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/src/World.h">
+			<Option target="pdc_evol_model"/>
+		</Unit>
+		<Unit filename="/home/nathan/DEV/PC-optimisation/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

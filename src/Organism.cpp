@@ -192,57 +192,50 @@ void Organism::build_regulation_network() {
   }
 }
 
-void Organism::activate_pump_step1(Pump * & it) {
-    for (auto prot : protein_list_map_) {
-        if (it->start_range_ >= prot.second->value_ &&
-            it->end_range_ <= prot.second->value_) {
-            float remove =
-                    prot.second->concentration_*(it->speed_/100);
-            prot.second->concentration_-=remove;
-            if ( gridcell_->protein_list_map_.find(prot.second->value_)
-                 == gridcell_->protein_list_map_.end() ) {
-                Protein* prot_n = new Protein(prot.second->type_,
-                                              prot.second->binding_pattern_,
-                                              prot.second->value_);
-                prot_n->concentration_ = remove;
-                gridcell_->protein_list_map_[prot.second->value_] = prot_n;
-            } else {
-                gridcell_->protein_list_map_[prot.second->value_]
-                        ->concentration_ += remove;
-            }
-        }
-    }
-}
-
-void Organism::activate_pump_step2(Pump * & it) {
-    for (auto prot : gridcell_->protein_list_map_) {
-        if (it->start_range_ >= prot.first &&
-            it->end_range_ <= prot.first) {
-            float remove =
-                    prot.second->concentration_*(it->speed_/100);
-            prot.second->concentration_-=remove;
-            if ( protein_list_map_.find(prot.first)
-                 == protein_list_map_.end() ) {
-                Protein* prot_n = new Protein(prot.second->type_,
-                                              prot.second->binding_pattern_,
-                                              prot.second->value_);
-                prot_n->concentration_ = remove;
-                protein_list_map_[prot_n->value_] = prot_n;
-            } else {
-                protein_list_map_[prot.first]
-                        ->concentration_ += remove;
-            }
-        }
-    }
-}
 
 void Organism::activate_pump() {
-  #pragma omp parallel for
+  #pragma omp for
   for (auto &it : pump_list_) {
     if (it->in_out_) {
-        activate_pump_step1(it);
+        for (auto prot : protein_list_map_) {
+            if (it->start_range_ >= prot.second->value_ &&
+                it->end_range_ <= prot.second->value_) {
+                float remove =
+                        prot.second->concentration_*(it->speed_/100);
+                prot.second->concentration_-=remove;
+                if ( gridcell_->protein_list_map_.find(prot.second->value_)
+                     == gridcell_->protein_list_map_.end() ) {
+                    Protein* prot_n = new Protein(prot.second->type_,
+                                                  prot.second->binding_pattern_,
+                                                  prot.second->value_);
+                    prot_n->concentration_ = remove;
+                    gridcell_->protein_list_map_[prot.second->value_] = prot_n;
+                } else {
+                    gridcell_->protein_list_map_[prot.second->value_]
+                            ->concentration_ += remove;
+                }
+            }
+        }
     } else {
-        activate_pump_step2(it);
+        for (auto prot : gridcell_->protein_list_map_) {
+            if (it->start_range_ >= prot.first &&
+                it->end_range_ <= prot.first) {
+                float remove =
+                        prot.second->concentration_*(it->speed_/100);
+                prot.second->concentration_-=remove;
+                if ( protein_list_map_.find(prot.first)
+                     == protein_list_map_.end() ) {
+                    Protein* prot_n = new Protein(prot.second->type_,
+                                                  prot.second->binding_pattern_,
+                                                  prot.second->value_);
+                    prot_n->concentration_ = remove;
+                    protein_list_map_[prot_n->value_] = prot_n;
+                } else {
+                    protein_list_map_[prot.first]
+                            ->concentration_ += remove;
+                }
+            }
+        }
     }
   }
 }

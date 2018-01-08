@@ -84,6 +84,7 @@ void World::random_population() {
   max_fitness_ = org->fitness_;
 
   printf("Found !\nFilling the grid\n");
+ //#pragma omp for
   for (i = 0; i < width_; i++) {
     for (int j=0; j < height_; j++) {
       grid_cell_[i*width_+j]->organism_ = new Organism(new DNA(org->dna_));
@@ -150,7 +151,7 @@ void World::evolution_step() {
   max_fitness_ = 0;
 
   Organism* best;
-
+  #pragma omp parallel for collapse(2)
   for (int i = 0; i < width_; i++) {
     for (int j = 0; j < height_; j++) {
       if (grid_cell_[i * width_ + j]->organism_ != nullptr) {
