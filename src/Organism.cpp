@@ -4,6 +4,7 @@
 
 #include "Organism.h"
 #include "DNA.h"
+#include <omp.h>
 
 
 void Organism::translate_RNA() {
@@ -30,7 +31,6 @@ void Organism::translate_protein() {
   int rna_id = 0;
 
   rna_produce_protein_.resize(rna_list_.size());
-
   for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
     for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) {
       if ((*it_j)->type_ == (int) BP::BP_Type::START_PROTEIN) {
@@ -237,6 +237,7 @@ void Organism::activate_pump_step2(Pump * & it) {
 }
 
 void Organism::activate_pump() {
+  #pragma omp parallel for
   for (auto &it : pump_list_) {
     if (it->in_out_) {
         activate_pump_step1(it);
@@ -347,7 +348,7 @@ bool Organism::dying_or_not() {
   int death_number = dis_death(gridcell_->float_gen_);
 
 
-  bool death = (bool) (death_number % 2);
+  auto death = (bool) (death_number % 2);
 
   return death;
 }
