@@ -194,8 +194,8 @@ void Organism::build_regulation_network() {
 
 
 void Organism::activate_pump() {
-  #pragma omp for
-  for (auto &it : pump_list_) {
+  //#pragma omp for
+  for (auto it : pump_list_) {
     if (it->in_out_) {
         for (auto prot : protein_list_map_) {
             if (it->start_range_ >= prot.second->value_ &&
