@@ -25,7 +25,6 @@ class World {
     int width_;
     int height_;
 
-    uint32_t global_seed_;
     std::mt19937 global_gen_;
 
 
