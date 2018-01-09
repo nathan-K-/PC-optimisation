@@ -1,43 +1,74 @@
 import subprocess
 import csv
 import time
+import psutil
 
-nbr_exec = 2
-nbr_threads = 4
+nbr_exec = 4
+nbr_threads = psutil.cpu_count()
 
-log_file = "perfs_log-" + str(int(time.time())) + ".csv"
+# TODO apres un checkout, ecraser Common.h (nbr steps) et main (taille de la grille en parametre)
 
-with open(log_file, 'a') as csvfile:
-    fieldnames = ["# of threads", "execution", "tests success", "total time (ms)"]
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+filename_fort = "perfs_echelle_fort-" + str(int(time.time())) + ".csv"
+filename_faible = "perfs_echelle_faible-" + str(int(time.time())) + ".csv"
 
-    writer.writeheader()
 
-    for thr in range(1, nbr_threads+1):
+def passage_echelle_fort(filename_fort):
+    with open(filename_fort, 'a') as csvfile:
+        fieldnames = ["# of threads", "execution", "tests success", "total time (ms)"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        for i in range(nbr_exec):
-            ls = subprocess.run(["./run.sh", str(thr)], stdout=subprocess.PIPE)
-            output = ls.stdout.decode("UTF-8")
-            # print(output)
-            #output = '-- Configuring done\n-- Generating done\n-- Build files have been written to: ' \
-             ##        '/home/nathan/DEV/PC-optimisation\n[100%] Built target pdc_evol_model\nInit binding matrix\nDone in 440 ' \
-              #       'ms\nCreate World\nDone in 165 ms\nInitialize environment\nDone in 5 ms\nInitialize random ' \
-              #       'population\nSearching for a viable organism .Found !\nFilling the grid\nDone in 8630 ms\nRun ' \
-              #       'evolution\nEvolution at step 0 -- Number of Organism 1024  (Dead: 9 -- Mutant: 9)-- Min Fitness: 0.006481 -- ' \
-              #       'Max Fitness: 0.006481\nDone in 45958 ms\nTotal time : 55201 ms\nNon-regression test successful !\n '
+        writer.writeheader()
 
-            output_splitted = output.split('\n')
+        for thr in range(1, nbr_threads + 1):
 
-            if output_splitted[-2] != 'Non-regression test successful !':
-                writer.writerow({"# of threads": thr, "execution": i, "tests success": False,
-                                 "total time (ms)": None})
-                csvfile.flush()
-                continue
+            for i in range(nbr_exec):
+                ls = subprocess.run(["./run.sh", str(thr)], stdout=subprocess.PIPE)
+                output = ls.stdout.decode("UTF-8")
 
-            actual_total_time_ms = output_splitted[-3].split(' ')[-2]
+                output_splitted = output.split('\n')
 
-            if actual_total_time_ms.isdigit():
-                writer.writerow({"# of threads": thr, "execution": i, "tests success": True,
-                                 "total time (ms)": actual_total_time_ms})
-                csvfile.flush()
+                if output_splitted[-2] != 'Non-regression test successful !':
+                    writer.writerow({"# of threads": thr, "execution": i, "tests success": False,
+                                     "total time (ms)": None})
+                    csvfile.flush()
+                    continue
 
+                actual_total_time_ms = output_splitted[-3].split(' ')[-2]
+
+                if actual_total_time_ms.isdigit():
+                    writer.writerow({"# of threads": thr, "execution": i, "tests success": True,
+                                     "total time (ms)": actual_total_time_ms})
+                    csvfile.flush()
+
+
+def passage_echelle_faible(filename_faible):
+    with open(filename_faible, 'a') as csvfile:
+        fieldnames = ["# of threads", "taille_grille","execution", "tests success", "total time (ms)"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+
+        for thr in range(1, nbr_threads + 1):
+
+            for i in range(nbr_exec):
+                ls = subprocess.run(["./run.sh", str(thr), str(8*nbr_threads)], stdout=subprocess.PIPE)
+                output = ls.stdout.decode("UTF-8")
+
+                output_splitted = output.split('\n')
+
+                if output_splitted[-2] != 'Non-regression test successful !':
+                    writer.writerow({"# of threads": thr, "execution": i, "tests success": False,
+                                     "total time (ms)": None, "taille_grille": None})
+                    csvfile.flush()
+                    continue
+
+                actual_total_time_ms = output_splitted[-3].split(' ')[-2]
+
+                if actual_total_time_ms.isdigit():
+                    writer.writerow({"# of threads": thr, "execution": i, "tests success": True,
+                                     "total time (ms)": actual_total_time_ms, "taille_grille": 8*nbr_threads})
+                    csvfile.flush()
+
+
+passage_echelle_fort(filename_fort)
+passage_echelle_faible(filename_faible)
