@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     auto t1 = std::chrono::high_resolution_clock::now();
 
     printf("Init binding matrix\n");
@@ -17,7 +17,13 @@ int main() {
 
     auto t3 = std::chrono::high_resolution_clock::now();
     printf("Create World\n");
-    World* world = new World(32, 32, 897986875);
+
+	int dim = 32;
+	if (argc > 1) {
+	  dim = atoi(argv[1]);
+	}
+
+    World* world = new World(dim, dim, 897986875);
     auto t4 = std::chrono::high_resolution_clock::now();
     auto duration_hw = std::chrono::duration_cast<std::chrono::milliseconds>(t4-t3).count();
     printf("Done in %li ms\n", duration_hw);
