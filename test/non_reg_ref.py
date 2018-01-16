@@ -8,7 +8,7 @@ mean_test_file = "../stats_mean.txt"
 
 
 def compare_file(file1, file2):
-    #assert len(file1) == len(test_ref)
+    #assert len(file1) == len(test_ref) won't work if grid size change
 
     for i in range(len(file1)):
         #assert len(file1[i]) == len(file2[i])
