@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 cmake .
 make
-./pdc_evol_model
+export OMP_NUM_THREADS=$1
+./pdc_evol_model $2
 cd test && python3 non_reg_ref.py
