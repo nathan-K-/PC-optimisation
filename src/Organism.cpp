@@ -4,7 +4,7 @@
 
 #include "Organism.h"
 #include "DNA.h"
-#include "Common.h"
+#include <omp.h>
 
 
 void Organism::translate_RNA() {
@@ -29,6 +29,8 @@ void Organism::translate_protein() {
 
   float binding_pattern = -1;
   int rna_id = 0;
+
+  rna_produce_protein_.resize(rna_list_.size());
   for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
     for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) {
       if ((*it_j)->type_ == (int) BP::BP_Type::START_PROTEIN) {
@@ -121,8 +123,8 @@ void Organism::translate_protein() {
 void Organism::translate_pump() {
   bool within_pump = false;
 
-  for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
-    for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) {
+  for (auto &it : rna_list_) {
+    for (auto it_j = it->bp_list_.begin(); it_j < it->bp_list_.end(); it_j++) {
       if ((*it_j)->type_ ==
           (int) BP::BP_Type::START_PUMP) {
         within_pump = true;
@@ -169,77 +171,71 @@ void Organism::translate_move() {
 
 void Organism::build_regulation_network() {
   int rna_id = 0;
-  for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
-    for ( auto it_j = protein_fitness_list_.begin(); it_j != protein_fitness_list_.end(); it_j++ ) {
-      int index_i = (*it)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
-      int index_j = (*it_j)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
+
+  rna_influence_.resize(rna_list_.size());
+  for (auto &it : rna_list_) {
+    for (auto &it_j : protein_fitness_list_) {
+      int index_i = it->binding_pattern_*Common::BINDING_MATRIX_SIZE;
+      int index_j = it_j->binding_pattern_*Common::BINDING_MATRIX_SIZE;
       if (Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j] != 0) {
-        rna_influence_[rna_id][(*it_j)->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
+        rna_influence_[rna_id][it_j->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
       }
     }
-    for ( auto it_j = protein_TF_list_.begin(); it_j != protein_TF_list_.end(); it_j++ ) {
+    for (auto &it_j : protein_TF_list_) {
       int index_i = rna_list_[rna_id]->binding_pattern_*Common::BINDING_MATRIX_SIZE;
-      int index_j =  (*it_j)->binding_pattern_*Common::BINDING_MATRIX_SIZE;
+      int index_j = it_j->binding_pattern_*Common::BINDING_MATRIX_SIZE;
       if (Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j] != 0) {
-        rna_influence_[rna_id][(*it_j)->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
+        rna_influence_[rna_id][it_j->value_] = Common::matrix_binding_[index_i*Common::BINDING_MATRIX_SIZE+index_j];
       }
     }
     rna_id++;
   }
 }
 
-void Organism::compute_next_step() {
-  // Activate Pump
-  activate_pump();
-
-  // Compute protein concentration for X steps
-  compute_protein_concentration();
-}
-
-
 
 void Organism::activate_pump() {
-  for (auto it = pump_list_.begin(); it != pump_list_.end(); it++) {
-    if ((*it)->in_out_) {
-      for (auto prot : protein_list_map_) {
-        if ((*it)->start_range_ >= prot.second->value_ &&
-            (*it)->end_range_ <= prot.second->value_) {
-          float remove =
-              prot.second->concentration_*((*it)->speed_/100);
-          prot.second->concentration_-=remove;
-          if ( gridcell_->protein_list_map_.find(prot.second->value_)
-               == gridcell_->protein_list_map_.end() ) {
-            Protein* prot_n = new Protein(prot.second->type_,
-                                        prot.second->binding_pattern_,
-                                          prot.second->value_);
-            prot_n->concentration_ = remove;
-            gridcell_->protein_list_map_[prot.second->value_] = prot_n;
-          } else {
-            gridcell_->protein_list_map_[prot.second->value_]
-                ->concentration_ += remove;
-          }
+  //#pragma omp for
+  for (auto it : pump_list_) {
+    if (it->in_out_) {
+        for (auto prot : protein_list_map_) {
+            if (it->start_range_ >= prot.second->value_ &&
+                it->end_range_ <= prot.second->value_) {
+                float remove =
+                        prot.second->concentration_*(it->speed_/100);
+                prot.second->concentration_-=remove;
+                if ( gridcell_->protein_list_map_.find(prot.second->value_)
+                     == gridcell_->protein_list_map_.end() ) {
+                    Protein* prot_n = new Protein(prot.second->type_,
+                                                  prot.second->binding_pattern_,
+                                                  prot.second->value_);
+                    prot_n->concentration_ = remove;
+                    gridcell_->protein_list_map_[prot.second->value_] = prot_n;
+                } else {
+                    gridcell_->protein_list_map_[prot.second->value_]
+                            ->concentration_ += remove;
+                }
+            }
         }
-      }
     } else {
-      for (auto prot : gridcell_->protein_list_map_) {
-        if ((*it)->start_range_ >= prot.first &&
-            (*it)->end_range_ <= prot.first) {
-          float remove =
-              prot.second->concentration_*((*it)->speed_/100);
-          prot.second->concentration_-=remove;
-          if ( protein_list_map_.find(prot.first)
-               == protein_list_map_.end() ) {
-            Protein* prot_n = new Protein(prot.second->type_,
-                                          prot.second->binding_pattern_,
-                                          prot.second->value_);
-            prot_n->concentration_ = remove;
-            protein_list_map_[prot_n->value_] = prot_n;
-          } else {
-            protein_list_map_[prot.first]
-                ->concentration_ += remove;
-          }
+        for (auto prot : gridcell_->protein_list_map_) {
+            if (it->start_range_ >= prot.first &&
+                it->end_range_ <= prot.first) {
+                float remove =
+                        prot.second->concentration_*(it->speed_/100);
+                prot.second->concentration_-=remove;
+                if ( protein_list_map_.find(prot.first)
+                     == protein_list_map_.end() ) {
+                    Protein* prot_n = new Protein(prot.second->type_,
+                                                  prot.second->binding_pattern_,
+                                                  prot.second->value_);
+                    prot_n->concentration_ = remove;
+                    protein_list_map_[prot_n->value_] = prot_n;
+                } else {
+                    protein_list_map_[prot.first]
+                            ->concentration_ += remove;
+                }
+            }
         }
-      }
     }
   }
 }
@@ -262,30 +258,35 @@ void Organism::compute_protein_concentration_step1() {
 				delta_neg -= prot.second * protein_list_map_[prot.first]->concentration_;
 		}
 
-		float delta_pos_pow_n = pow(delta_pos, Common::hill_shape_n);
-		float delta_neg_pow_n = pow(delta_neg, Common::hill_shape_n);
-
-		rna_list_[rna_id]->current_concentration_ = rna_list_[rna_id]->concentration_base_
-			* (Common::hill_shape
-				/ (delta_neg_pow_n + Common::hill_shape))
-			* (1 + ((1 / rna_list_[rna_id]->concentration_base_) - 1)
-				* (delta_pos_pow_n /
-				(delta_pos_pow_n +
-					Common::hill_shape)));
-		rna_id++;
+		compute_protein_concentration_step1dot5(delta_pos, delta_neg, rna_id);
+        rna_id++;
 	}
+}
+
+void Organism::compute_protein_concentration_step1dot5(float delta_pos, float delta_neg, int rna_id) {
+	float delta_pos_pow_n = pow(delta_pos, Common::hill_shape_n);
+	float delta_neg_pow_n = pow(delta_neg, Common::hill_shape_n);
+
+	rna_list_[rna_id]->current_concentration_ = rna_list_[rna_id]->concentration_base_
+		* (Common::hill_shape
+			/ (delta_neg_pow_n + Common::hill_shape))
+		* (1 + ((1 / rna_list_[rna_id]->concentration_base_) - 1)
+			* (delta_pos_pow_n /
+			(delta_pos_pow_n +
+				Common::hill_shape)));
+
 }
 
 std::unordered_map<float, float> Organism::compute_protein_concentration_step2() {
 	std::unordered_map<float, float> delta_concentration;
 
-	for (auto rna : rna_produce_protein_) {
-		for (auto prot : rna_produce_protein_[rna.first]) {
+	for (int i = 0; i < rna_produce_protein_.size(); i++) {
+		for (auto prot : rna_produce_protein_[i]) {
 			if (delta_concentration.find(prot.first) == delta_concentration.end()) {
-				delta_concentration[prot.first] = rna_list_[rna.first]->current_concentration_;
+				delta_concentration[prot.first] = rna_list_[i]->current_concentration_;
 			}
 			else {
-				delta_concentration[prot.first] += rna_list_[rna.first]->current_concentration_;
+				delta_concentration[prot.first] += rna_list_[i]->current_concentration_;
 			}
 		}
 	}
@@ -296,7 +297,7 @@ std::unordered_map<float, float> Organism::compute_protein_concentration_step2()
 void Organism::compute_protein_concentration_step3(std::unordered_map<float, float>& delta_concentration) {
 	for (auto delta : delta_concentration) {
 		delta.second -= Common::Protein_Degradation_Rate * protein_list_map_[delta.first]->concentration_;
-		delta.second *= 1 / (Common::Protein_Degradation_Step);
+		delta.second *= 1 / (float) (Common::Protein_Degradation_Step);
 
 		protein_list_map_[delta.first]->concentration_ += delta.second;
 	}
@@ -340,45 +341,11 @@ bool Organism::dying_or_not() {
   int death_number = dis_death(gridcell_->float_gen_);
 
 
-  bool death = (bool) death_number % 2;
+  auto death = (bool) (death_number % 2);
 
   return death;
 }
-/*
-void Organism::try_to_move() {
-  for (auto it = move_list_.begin(); it != move_list_.end(); it++) {
-    if ((*it)->distance_ > 0) {
-      bool move = false;
-      int retry = 0;
-      std::uniform_int_distribution<uint32_t> dis_distance(0,(*it)->distance_);
-      while (retry < (*it)->retry_ && !move) {
-        int x_offset=dis_distance(gridcell_->float_gen_);
-        int y_offset=dis_distance(gridcell_->float_gen_);
-        int new_x,new_y;
-        if (gridcell_->x_+x_offset >= gridcell_->world_->width_) {
-          new_x = gridcell_->world_->width_-1;
-        } else {
-          new_x = gridcell_->x_+x_offset;
-        }
 
-        if (gridcell_->y_+y_offset >= gridcell_->world_->height_) {
-          new_y = gridcell_->world_->height_-1;
-        } else {
-          new_y = gridcell_->y_+y_offset;
-        }
-
-        if (gridcell_->world_->grid_cell_[new_x*gridcell_->world_->width_+new_y]->organism_ != nullptr) {
-          move = true;
-          move_success_++;
-          gridcell_->world_->grid_cell_[new_x*gridcell_->world_->width_+new_y]->organism_ = this;
-          gridcell_ = gridcell_->world_->grid_cell_[new_x*gridcell_->world_->width_+new_y];
-          gridcell_->organism_ = nullptr;
-        }
-      }
-    }
-  }
-}
-*/
 void Organism::compute_fitness() {
   life_duration_++;
 
@@ -417,7 +384,6 @@ void Organism::compute_fitness() {
 }
 
 void Organism::mutate() {
-  old = this;
 
   std::binomial_distribution<int> dis_switch(dna_->bp_list_.size(),Common::Mutation_Rate);
   std::binomial_distribution<int> dis_insertion(dna_->bp_list_.size(),Common::Mutation_Rate);
@@ -491,13 +457,6 @@ void Organism::mutate() {
     dna_->modify_bp(modification_pos,gridcell_);
   }
 }
-
-Organism* Organism::divide() {
-  Organism* new_org = new Organism(this);
-  return new_org;
-}
-
-
 
 
 Organism::Organism(Organism* organism) {

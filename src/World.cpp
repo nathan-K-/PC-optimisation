@@ -39,7 +39,6 @@ World::World(int width, int height, uint32_t seed) {
 
   grid_cell_ = new GridCell*[width*height];
 
-  global_seed_ = seed;
   global_gen_.seed(seed);
 
   std::uniform_int_distribution<uint32_t> dis(0,UINT32_MAX);
@@ -85,7 +84,8 @@ void World::random_population() {
   max_fitness_ = org->fitness_;
 
   printf("Found !\nFilling the grid\n");
-  for (int i = 0; i < width_; i++) {
+ //#pragma omp for
+  for (i = 0; i < width_; i++) {
     for (int j=0; j < height_; j++) {
       grid_cell_[i*width_+j]->organism_ = new Organism(new DNA(org->dna_));
       grid_cell_[i*width_+j]->organism_->init_organism();
@@ -151,7 +151,7 @@ void World::evolution_step() {
   max_fitness_ = 0;
 
   Organism* best;
-
+  #pragma omp parallel for collapse(2)
   for (int i = 0; i < width_; i++) {
     for (int j = 0; j < height_; j++) {
       if (grid_cell_[i * width_ + j]->organism_ != nullptr) {
@@ -278,13 +278,9 @@ void World::test_mutate() {
   int worse = 0;
   int equal = 0;
 
-  int dna_size_larger = 0;
-  int dna_size_equal = 0;
-  int dna_size_smaller = 0;
-
   // TEST MUTATE (1,000,000)
-  for (int i = 0; i < 10000;i++) {
-    if (i%1000==0) printf("%d\n",i);
+  for (i = 0; i < 10000;i++) {
+    if (i%1000==0) printf("%li\n",i);
 
     Organism* org_new = new Organism(new DNA(org->dna_));
     org_new->gridcell_ = grid_cell_[0];
