@@ -1,5 +1,0 @@
-- Profiling du code (intel parallel studio, icc pour compilo c/c++, advisor profiling de code + indications, vtune pareil mais on voit execution //)
-- Optimiser (OpenMP / MPI / CUDA) (pour MPI -> Grid 5000 obligatoire)
-
-- Doc avec courbes étou pour tout décrire, au fur et à mesure
-- Mail si questions (ou acces Xeon Phi, nouveaux GPU - titan X -, ...)
